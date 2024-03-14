@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Inquiry Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #chat-container {
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #chat p {
+            margin: 5px 0;
+        }
+        #chat-form {
+            width: 100%;
+            display: flex;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px 0 0 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        #send-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #send-btn:hover {
+            background-color: #0056b3;
+        }
+        #bot-img {
+            width: 100px; /* Adjust size as needed */
+            height: auto;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body background="https://static.vecteezy.com/system/resources/previews/020/533/249/original/chat-bot-background-with-blue-gradient-and-circuits-free-vector.jpg" style="background-repeat:no-repeat;background-size:100%">
+    <div class="container">
+        <h1>College Inquiry Chatbot</h1>
+        <img src="https://bepartner-assets.s3.eu-central-1.amazonaws.com/projects/1590354897-inbound8799569751834330460.png" alt="Bot" id="bot-img">
+        <div id="chat-container">
+            <div id="chat"></div>
+        </div>
+        <form id="chat-form">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button type="submit" id="send-btn">Send</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var userInput = document.getElementById('user-input').value.trim();
+            if (userInput === '') return;
+            var timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+            document.getElementById('chat').innerHTML += '<p><strong>You (' + timestamp + '):</strong> ' + userInput + '</p>';
+            document.getElementById('user-input').value = '';
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'user_input=' + encodeURIComponent(userInput)
+            })
+            .then(response => response.json())
+            .then(data => {
+                var botResponse = data.response;
+                var timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                document.getElementById('chat').innerHTML += '<p><strong>Bot (' + timestamp + '):</strong> ' + botResponse + '</p>';
+                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            });
+        });
+    </script>
+</body>
+</html>
